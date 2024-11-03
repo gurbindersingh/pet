@@ -48,5 +48,6 @@ fn main() {
     assert_eq!(TrafficLight::Green.light_duration(), 30);
     assert_eq!(TrafficLight::Yellow.light_duration(), 5);
     assert_eq!(safe_divide(4, 2), Some(2));
+    assert_eq!(safe_divide(4, 3), Some(1));
     assert_eq!(safe_divide(4, 0), None);
 }
