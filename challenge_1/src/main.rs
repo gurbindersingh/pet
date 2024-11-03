@@ -1,5 +1,5 @@
 use task_1_1::{countdown, day_of_week, max_of_three, sum_even_numbers};
-use task_1_2::{concat_strings, factorial, find_max, is_prime};
+use task_1_2::{concat_strings, factorial, find_max, is_prime, reverse_string};
 use task_1_3::{safe_divide, Student, TrafficLight};
 
 mod task_1_1;
@@ -31,12 +31,9 @@ fn main() {
     println!("{}", is_prime(11));
     assert_eq!(is_prime(11), true);
 
-    /*
     let mut s= String::from("reverse");
     println!("{:?}",reverse_string(&mut s));
-    assert_eq!(reverse_string(&mut s),"esrever");
-
-    */
+    assert_eq!(s, "esrever");
 
     println!("{}", concat_strings("part1", "part2"));
     assert_eq!(concat_strings("part1", "part2"), "part1part2");
