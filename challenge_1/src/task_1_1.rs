@@ -10,7 +10,7 @@ pub fn max_of_three(a: i32, b: i32, c: i32) -> i32 {
         max = c;
     }
 
-    return max;
+    max
 }
 
 // Loops: sum_even_numbers function
@@ -23,7 +23,7 @@ pub fn sum_even_numbers() -> i32 {
         }
     }
 
-    return sum;
+    sum
 }
 
 // Loops: Countdown function with while loop
@@ -34,19 +34,19 @@ pub fn countdown() {
         println!("{}", countdown);
         countdown -= 1;
     }
-    println!("Liftoff");
+    println!("Liftoff!");
 }
 
 // Match Statement: day_of_week function
 pub fn day_of_week(day: i32) -> &'static str {
     match day {
-        1 => return "Monday",
-        2 => return "Tuesday",
-        3 => return "Wednesday",
-        4 => return "Thursday",
-        5 => return "Friday",
-        6 => return "Saturday",
-        7 => return "Sunday",
-        _ => return "Invalid day"
+        1 => "Monday",
+        2 => "Tuesday",
+        3 => "Wednesday",
+        4 => "Thursday",
+        5 => "Friday",
+        6 => "Saturday",
+        7 => "Sunday",
+        _ => "Invalid day"
     }
 }
