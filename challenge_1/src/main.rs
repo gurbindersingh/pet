@@ -32,7 +32,8 @@ fn main() {
     assert_eq!(is_prime(11), true);
 
     let mut s= String::from("reverse");
-    println!("{:?}",reverse_string(&mut s));
+    reverse_string(&mut s);
+    println!("{:?}", s);
     assert_eq!(s, "esrever");
 
     println!("{}", concat_strings("part1", "part2"));
