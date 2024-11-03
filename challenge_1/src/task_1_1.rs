@@ -15,8 +15,8 @@ pub fn max_of_three(a: i32, b: i32, c: i32) -> i32 {
 
 // Loops: sum_even_numbers function
 pub fn sum_even_numbers() -> i32 {
-   let mut sum = 0; 
-   
+    let mut sum = 0;
+
     for val in 1..=100 {
         if val % 2 == 0 {
             sum += val;
@@ -47,6 +47,6 @@ pub fn day_of_week(day: i32) -> &'static str {
         5 => "Friday",
         6 => "Saturday",
         7 => "Sunday",
-        _ => "Invalid day"
+        _ => "Invalid day",
     }
 }

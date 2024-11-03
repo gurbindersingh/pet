@@ -1,18 +1,18 @@
 // Function: factorial (recursive)
 pub fn factorial(n: u32) -> u32 {
-    if n == 0 || n == 1{
+    if n == 0 || n == 1 {
         1
     } else {
-        n*factorial(n-1)
+        n * factorial(n - 1)
     }
 }
 
 // Function: is_prime (using factorial function)
 pub fn is_prime(n: u32) -> bool {
-    if n == 1{
+    if n == 1 {
         return false;
     }
-    factorial(n-1) % n == n-1
+    factorial(n - 1) % n == n - 1
 }
 
 // Ownership and Borrowing
@@ -24,7 +24,6 @@ pub fn reverse_string(s: &mut String) {
     s_chars.reverse();
 
     *s = s_chars.iter().collect();
-    
 }
 
 // Function: concat_strings (concatenates two &str and returns a String)

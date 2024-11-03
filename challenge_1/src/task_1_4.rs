@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 // Function to square each element in a vector and return a new vector
 pub fn square_elements(v: &Vec<i32>) -> Vec<i32> {
-    v.iter().map(|item|item.pow(2)).collect()
+    v.iter().map(|item| item.pow(2)).collect()
 }
 
 // HashMap
