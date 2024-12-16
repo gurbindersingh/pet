@@ -17,15 +17,37 @@ pub struct ElGamalCiphertext {
 
 impl ElGamalCiphertext {
     /// Generates a new KeyPair for encryption
-    pub fn keygen() -> KeyPair {}
+    pub fn keygen() -> KeyPair {
+      KeyPair::generate()
+    }
 
     /// Encrypts a message (represented as a scalar) using the recipient's public key
     /// Returns an `ElGamalCiphertext` struct containing the encrypted message
-    pub fn encrypt(message: &Scalar, public_key: &RistrettoPoint) -> ElGamalCiphertext {}
+    pub fn encrypt(message: &Scalar, public_key: &RistrettoPoint) -> ElGamalCiphertext {
+        let r = Scalar::random(&mut OsRng);
+        let c1 = RISTRETTO_BASEPOINT_POINT * r;
+        let shared_secret = public_key * r;
+
+        let mut hasher = Sha512::new();
+        hasher.update(shared_secret.compress().as_bytes());
+        let hash = Scalar::from_hash(hasher);
+
+        let c2 = message + hash;
+
+        ElGamalCiphertext{c1, c2}
+    }
 
     /// Decrypts an ElGamal ciphertext using the recipient's private key
     /// Returns the decrypted scalar (original message)
-    pub fn decrypt(&self, private_key: &Scalar) -> Scalar {}
+    pub fn decrypt(&self, private_key: &Scalar) -> Scalar {
+        let shared_secret = self.c1 * private_key;
+
+        let mut hasher = Sha512::new();
+        hasher.update(shared_secret.compress().as_bytes());
+        let hash = Scalar::from_hash(hasher);
+
+        self.c2 - hash
+    }
 }
 
 #[cfg(test)]
