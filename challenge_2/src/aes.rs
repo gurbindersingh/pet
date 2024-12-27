@@ -3,7 +3,10 @@ extern crate curve25519_dalek;
 extern crate rand;
 
 use aead::generic_array::GenericArray;
-use aes_gcm::aead::{Aead, KeyInit}; // Use KeyInit for the `new` method
+use aead::{AeadCore, AeadMut};
+use aes_gcm::aead::{Aead, KeyInit};
+use aes_gcm::aes::{self, cipher};
+// Use KeyInit for the `new` method
 use aes_gcm::{Aes256Gcm, Nonce}; // AES-GCM with 256-bit key
 use curve25519_dalek::scalar::Scalar;
 use rand::{rngs::OsRng, Rng};
@@ -36,10 +39,34 @@ impl AESCiphertext {
     }
 
     /// Encrypts a plaintext message using AES-256-GCM with a Scalar as the AES key
-    pub fn encrypt(scalar_key: &Scalar, message: &[u8]) -> Result<AESCiphertext, String> {}
+    pub fn encrypt(scalar_key: &Scalar, message: &[u8]) -> Result<AESCiphertext, String> {
+        let aes_key_bytes = Self::scalar_to_aes_key(scalar_key);
+        // Key is an alias for GenericArray: https://docs.rs/aes-gcm/latest/aes_gcm/type.Key.html
+        let cipher = Aes256Gcm::new(GenericArray::from_slice(&aes_key_bytes));
+        // The nonce is similar to a salt in hash, it must be unique for every message.
+        let nonce = Aes256Gcm::generate_nonce(OsRng);
+
+        match cipher.encrypt(&nonce, message) {
+            Ok(ciphertext) => Ok(AESCiphertext {
+                nonce: nonce.into(),
+                ciphertext: ciphertext,
+            }),
+            Err(_) => Err("Encryption failed".to_string()),
+        }
+    }
 
     /// Decrypts a ciphertext using AES-256-GCM with a Scalar as the AES key
     pub fn decrypt(scalar_key: &Scalar, aes_ciphertext: &AESCiphertext) -> Result<Vec<u8>, String> {
+        let aes_key_bytes = Self::scalar_to_aes_key(scalar_key);
+        let cipher = Aes256Gcm::new(GenericArray::from_slice(&aes_key_bytes));
+
+        match cipher.decrypt(
+            GenericArray::from_slice(&aes_ciphertext.nonce),
+            aes_ciphertext.ciphertext.as_ref(),
+        ) {
+            Ok(plaintext) => Ok(plaintext),
+            Err(_) => Err("Decryption failed".to_string()),
+        }
     }
 }
 
