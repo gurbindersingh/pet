@@ -5,7 +5,6 @@ extern crate rand;
 use aead::generic_array::GenericArray;
 use aead::{AeadCore, AeadMut};
 use aes_gcm::aead::{Aead, KeyInit};
-use aes_gcm::aes::{self, cipher};
 // Use KeyInit for the `new` method
 use aes_gcm::{Aes256Gcm, Nonce}; // AES-GCM with 256-bit key
 use curve25519_dalek::scalar::Scalar;
