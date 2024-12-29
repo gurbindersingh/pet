@@ -16,10 +16,28 @@ pub struct SchnorrSignature {
 
 impl SchnorrSignature {
     /// Generates a new KeyPair for signing
-    pub fn keygen() -> KeyPair {}
+    pub fn keygen() -> KeyPair {
+        // sk = private key
+        // pk = public key
+        KeyPair::generate()
+    }
 
     /// Sign a message with a private key
-    pub fn sign(message: &[u8], signing_key: &Scalar) -> SchnorrSignature {}
+    pub fn sign(message: &[u8], signing_key: &Scalar) -> SchnorrSignature {
+        let r = Scalar::random(&mut OsRng);
+        let R = RISTRETTO_BASEPOINT_POINT * r;
+        let public_key = RISTRETTO_BASEPOINT_POINT * signing_key;
+
+        // https://docs.rs/sha2/latest/sha2/
+        let mut hasher = Sha512::new();
+        hasher.update(public_key.compress().as_bytes());
+        hasher.update(R.compress().as_bytes());
+        hasher.update(message);
+
+        let h = Scalar::from_hash(hasher);
+        let s = r + h * signing_key;
+        SchnorrSignature { R, s }
+    }
 
     /// Verify a Schnorr signature
     pub fn verify(
@@ -27,6 +45,13 @@ impl SchnorrSignature {
         message: &[u8],
         public_key: &RistrettoPoint,
     ) -> bool {
+        let mut hasher = Sha512::new();
+        hasher.update(public_key.compress().as_bytes());
+        hasher.update(signature.R.compress().as_bytes());
+        hasher.update(message);
+        let h = Scalar::from_hash(hasher);
+        // Is the multiplication in the task description a mistake?
+        (RISTRETTO_BASEPOINT_POINT * signature.s) == (signature.R + (public_key * h))
     }
 
     // Converts RistrettoPoint to a byte array
