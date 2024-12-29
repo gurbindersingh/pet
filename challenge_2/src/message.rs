@@ -44,6 +44,13 @@ impl Message {
         recipient: CompressedRistretto,
         signature: SchnorrSignature,
     ) -> Self {
+        Self {
+            version: u8,
+            payload: payload,
+            recipient: recipient.to_bytes(),
+            sender: sender.to_bytes(),
+            signature: signature,
+        }
     }
 
     /// Writes the message to a JSON file
@@ -54,7 +61,22 @@ impl Message {
     }
 
     /// Encrypts the whole message using hybrid encryption
-    pub fn encrypt(&mut self, elgamal_public_key: &RistrettoPoint) -> Result<(), String> {}
+    pub fn encrypt(&mut self, elgamal_public_key: &RistrettoPoint) -> Result<(), String> {
+        match serialize_message_to_bytes(self) {
+            Ok(seralized_message) => {
+                match HybridCiphertext::encrypt(&seralized_message, elgamal_public_key) {
+                    Ok(ciphertext) => {
+                        self.payload = ciphertext.serialize();
+                        self.version += 1;
+                        // self.sender = default sender somehow;
+                        Ok(())
+                    }
+                    Err(err) => Err(err),
+                }
+            }
+            Err(err) => Err(err),
+        }
+    }
 
     /// Decrypts the payload using hybrid decryption, sets version back to 0
     pub fn decrypt(&mut self, elgamal_private_key: &Scalar) -> Result<(), String> {}
