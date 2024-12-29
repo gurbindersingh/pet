@@ -2,6 +2,7 @@ use crate::hybrid_enc::HybridCiphertext;
 use crate::keys::KeyPair;
 use crate::schnorr::SchnorrSignature;
 use crate::serializers::*;
+use aead::OsRng;
 use curve25519_dalek::ristretto::{CompressedRistretto, RistrettoPoint};
 use curve25519_dalek::scalar::Scalar;
 use serde::{Deserialize, Serialize};
@@ -45,7 +46,7 @@ impl Message {
         signature: SchnorrSignature,
     ) -> Self {
         Self {
-            version: u8,
+            version: version,
             payload: payload,
             recipient: recipient.to_bytes(),
             sender: sender.to_bytes(),
@@ -68,7 +69,9 @@ impl Message {
                     Ok(ciphertext) => {
                         self.payload = ciphertext.serialize();
                         self.version += 1;
-                        // self.sender = default sender somehow;
+                        // sender should be set to default sender, whatever that means
+                        self.sender = RistrettoPoint::random(OsRng).compress().to_bytes();
+                        self.recipient = elgamal_public_key.compress().to_bytes();
                         Ok(())
                     }
                     Err(err) => Err(err),
