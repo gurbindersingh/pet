@@ -64,13 +64,13 @@ impl Message {
     /// Encrypts the whole message using hybrid encryption
     pub fn encrypt(&mut self, elgamal_public_key: &RistrettoPoint) -> Result<(), String> {
         match serialize_message_to_bytes(self) {
-            Ok(seralized_message) => {
-                match HybridCiphertext::encrypt(&seralized_message, elgamal_public_key) {
+            Ok(serialized_message) => {
+                match HybridCiphertext::encrypt(&serialized_message, elgamal_public_key) {
                     Ok(ciphertext) => {
                         self.payload = ciphertext.serialize();
                         self.version += 1;
                         // sender should be set to default sender, whatever that means
-                        self.sender = RistrettoPoint::random(OsRng).compress().to_bytes();
+                        self.sender = RistrettoPoint::random(&mut OsRng).compress().to_bytes();
                         self.recipient = elgamal_public_key.compress().to_bytes();
                         Ok(())
                     }
