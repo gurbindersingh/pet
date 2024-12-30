@@ -3,6 +3,7 @@ use crate::keys::KeyPair;
 use crate::schnorr::SchnorrSignature;
 use crate::serializers::*;
 use aead::OsRng;
+use curve25519_dalek::constants::RISTRETTO_BASEPOINT_POINT;
 use curve25519_dalek::ristretto::{CompressedRistretto, RistrettoPoint};
 use curve25519_dalek::scalar::Scalar;
 use serde::{Deserialize, Serialize};
@@ -82,12 +83,46 @@ impl Message {
     }
 
     /// Decrypts the payload using hybrid decryption, sets version back to 0
-    pub fn decrypt(&mut self, elgamal_private_key: &Scalar) -> Result<(), String> {}
+    pub fn decrypt(&mut self, elgamal_private_key: &Scalar) -> Result<(), String> {
+        match HybridCiphertext::deserialize(&self.payload) {
+            Err(err) => Err(err),
+            Ok(deserialized_ciphertext) => {
+                match deserialized_ciphertext.decrypt(elgamal_private_key) {
+                    Err(err) => Err(err),
+                    Ok(plaintext_bytes) => match deserialize_message_from_bytes(&plaintext_bytes) {
+                        Err(err) => Err(err),
+                        Ok(deserialized_message) => {
+                            self.version = deserialized_message.version;
+                            self.payload = deserialized_message.payload;
+                            self.sender = deserialized_message.sender;
+                            self.recipient = deserialized_message.recipient;
+                            self.signature = deserialized_message.signature;
+                            Ok(())
+                        }
+                    },
+                }
+            }
+        }
+    }
 
     /// signs the payload using Schnorr signatures, sets the signing public key as sender
-    pub fn sign(&mut self, signing_key: &Scalar) {}
+    pub fn sign(&mut self, signing_key: &Scalar) {
+        let vk = RISTRETTO_BASEPOINT_POINT * signing_key;
+        self.signature = SchnorrSignature::sign(&self.payload, signing_key);
+        self.sender = vk.compress().to_bytes();
+    }
 
-    pub fn verify(&self) -> bool {}
+    pub fn verify(&self) -> bool {
+        let vk = self.sender;
+        match CompressedRistretto::from_slice(&vk) {
+            Err(_) => false,
+            Ok(compressed_pk) => SchnorrSignature::verify(
+                &self.signature,
+                &self.payload,
+                &compressed_pk.decompress().expect("Failed to deserialize public key"),
+            ),
+        }
+    }
 }
 
 #[cfg(test)]
