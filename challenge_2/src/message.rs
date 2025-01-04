@@ -9,7 +9,6 @@ use curve25519_dalek::scalar::Scalar;
 use serde::{Deserialize, Serialize};
 use serde_json;
 use std::fs::File;
-use std::io::Read;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Message {
@@ -123,6 +122,24 @@ impl Message {
             ),
         }
     }
+
+    pub fn display(&self) {
+        println!("Message version: {}", self.version);
+
+        match std::str::from_utf8(&self.payload) {
+            Ok(text) => println!("Payload (UTF-8): {}", text),
+            Err(_) => println!("Payload (raw bytes): {:?}", self.payload),
+        }
+
+        // Print the sender and recipient as base64 or hex
+        let sender_b64 = base64::encode(self.sender);
+        let recipient_b64 = base64::encode(self.recipient);
+        println!("Sender (base64): {}", sender_b64);
+        println!("Recipient (base64): {}", recipient_b64);
+
+        // Print the signature (Debug-derive or as raw bytes)
+        println!("Signature: {:?}", self.signature);
+    }
 }
 
 #[cfg(test)]
@@ -130,7 +147,6 @@ mod tests {
     use super::*;
     use curve25519_dalek::ristretto::RistrettoPoint;
     use rand::rngs::OsRng;
-    use std::fs;
 
     #[test]
     fn test_message_creation() {

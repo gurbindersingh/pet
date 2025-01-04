@@ -8,7 +8,7 @@ use rand::rngs::OsRng;
 
 use sha2::{Digest, Sha512};
 /// Struct to represent a Schnorr signature
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Default, Debug, PartialEq, Clone)]
 pub struct SchnorrSignature {
     pub R: RistrettoPoint, // Commitment point
     pub s: Scalar,         // Response scalar
