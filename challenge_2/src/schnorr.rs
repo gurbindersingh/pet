@@ -81,7 +81,7 @@ impl SchnorrSignature {
         Ok(R)
     }
 
-    pub fn emty_signature() -> SchnorrSignature {
+    pub fn empty_signature() -> SchnorrSignature {
         SchnorrSignature {
             R: RISTRETTO_BASEPOINT_POINT,
             s: Scalar::ZERO,

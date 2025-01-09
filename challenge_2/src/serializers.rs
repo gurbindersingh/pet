@@ -130,7 +130,7 @@ mod tests {
         let payload = b"Test message".to_vec();
         let recipient = CompressedRistretto::default(); // Use default recipient for test
         let sender = CompressedRistretto::default(); // Use default sender for test
-        let signature = SchnorrSignature::emty_signature(); // Use empty signature for test
+        let signature = SchnorrSignature::empty_signature(); // Use empty signature for test
 
         let message = Message::new(1, payload.clone(), sender, recipient, signature);
 

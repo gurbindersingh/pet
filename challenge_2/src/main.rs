@@ -11,21 +11,25 @@ use crate::message::Message;
 use curve25519_dalek::ristretto::{CompressedRistretto};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Reading the necessary keys from files like described in the challenge
     let signing_key = KeyPair::sk_from_file("signing_key.txt")?;
     let encryption_key = KeyPair::pk_from_file("encryption_key.txt")?;
 
+    // creating message
     let group_id = b"Group ID: 59".to_vec();
     let sender_dummy = CompressedRistretto::default();
     let recipient_dummy = CompressedRistretto::from_slice(&encryption_key.compress().to_bytes())?;
-
     let mut message = Message::new(0, group_id, sender_dummy, recipient_dummy, Default::default());
 
+    // encrypting message with encryption key
     message
         .encrypt(&encryption_key)
         .expect("Failed to encrypt the message");
 
+    // signing message with signing key
     message.sign(&signing_key);
 
+    // writing the signed and encrypted message to a file
     message
         .to_file("signed_encrypted_message.json")
         .expect("Failed to write message to file");
@@ -42,7 +46,7 @@ mod tests {
     use crate::schnorr::SchnorrSignature;
     use super::*;
 
-    // Additional test to ensure the message can be decrypted and verified like in the sample above
+    // Additional test from the Group to ensure the message can be decrypted and verified like in the sample above
     #[test]
     fn test_with_sample() {
         // Generate keypair for encryption and signing

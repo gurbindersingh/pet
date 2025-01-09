@@ -162,7 +162,7 @@ mod tests {
             payload.clone(),
             recipient,
             recipient,
-            SchnorrSignature::emty_signature(),
+            SchnorrSignature::empty_signature(),
         );
 
         // Check if the fields match
@@ -188,7 +188,7 @@ mod tests {
             payload.clone(),
             keypair.public_key.compress(),
             keypair.public_key.compress(),
-            SchnorrSignature::emty_signature(),
+            SchnorrSignature::empty_signature(),
         );
 
         // Encrypt the message
