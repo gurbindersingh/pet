@@ -25,6 +25,7 @@ impl SchnorrSignature {
     /// Sign a message with a private key
     pub fn sign(message: &[u8], signing_key: &Scalar) -> SchnorrSignature {
         let r = Scalar::random(&mut OsRng);
+        // We are using elliptic curve here. It uses multiplication instead of exponents.
         let R = RISTRETTO_BASEPOINT_POINT * r;
         let public_key = RISTRETTO_BASEPOINT_POINT * signing_key;
 
@@ -35,8 +36,8 @@ impl SchnorrSignature {
         hasher.update(message);
 
         let h = Scalar::from_hash(hasher);
-        let s = r + h * signing_key;
-        SchnorrSignature { R, s }
+        let signature = r + h * signing_key;
+        SchnorrSignature { R, s: signature }
     }
 
     /// Verify a Schnorr signature
