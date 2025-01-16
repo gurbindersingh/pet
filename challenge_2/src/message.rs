@@ -70,7 +70,7 @@ impl Message {
                         self.payload = ciphertext.serialize();
                         self.version += 1;
                         // sender should be set to default sender, whatever that means
-                        self.sender = RistrettoPoint::random(&mut OsRng).compress().to_bytes();
+                        self.sender = CompressedRistretto::default().to_bytes();
                         self.recipient = elgamal_public_key.compress().to_bytes();
                         Ok(())
                     }
