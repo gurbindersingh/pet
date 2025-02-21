@@ -39,6 +39,7 @@ jobs:
         run: |
           mkdir -p public
           cp exam-questions/*.html public/
+          mv -v questions.html index.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
