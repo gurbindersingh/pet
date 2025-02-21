@@ -29,10 +29,27 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Copy HTML file to deployment directory
+        run: |
+          mkdir -p public
+          cp exam-questions/*.html public/
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: './exam-questions/questions.html'
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
