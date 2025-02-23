@@ -1,0 +1,17 @@
+hr {
+    margin: 50vh auto;
+    border-color: transparent !important;
+}
+
+h1 {
+    margin-bottom: 25vh;
+}
+
+h2 {
+    padding-top: 2rem;
+}
+
+body {
+    margin-bottom: 50vh;
+    font-size: 3rem;
+}
