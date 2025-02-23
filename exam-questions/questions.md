@@ -22,6 +22,7 @@
 
 - HTTP is communication protocol used for communication over a TCP/IP connection.
 - HTTPS extends HTTP by adding encryption using SLL/TLS.
+- HTTPS protects data from potential eavesdroppers.
 - By employing SSL stripping, a MITM attack.
 - By configuring HSTS, HTTP Strict Transport Security, which only allows clients to connect via HTTPS.
 
